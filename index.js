@@ -35,6 +35,15 @@ app.get('/productos', (req, res) => {
         })
 })
 
+app.get('/clientes', (req, res) => {
+    res.render('clientes',
+        {
+            titulo: 'Listado prodcutos',
+            nombre: 'Diego Lopez',
+            rol: 'Admin'
+        })
+})
+
 app.listen(puerto, () => {
     console.log(`Escuchando por el puerto ${puerto}`)
 })
