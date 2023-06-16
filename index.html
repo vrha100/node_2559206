@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<head>
+    <title>Formulario de Reporte</title>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Formulario de Reporte</h1>
+    <form id="reporteForm">
+        <div>
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion" required>
+            <span id="direccionError" class="error"></span>
+        </div>
+        <div>
+            <label for="latitud">Latitud:</label>
+            <input type="number" id="latitud" name="latitud" step="0.001" required>
+            <span id="latitudError" class="error"></span>
+        </div>
+        <div>
+            <label for="longitud">Longitud:</label>
+            <input type="number" id="longitud" name="longitud" step="0.001" required>
+            <span id="longitudError" class="error"></span>
+        </div>
+        <div>
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" required></textarea>
+            <span id="descripcionError" class="error"></span>
+        </div>
+        <button type="submit">Enviar</button>
+    </form>
+
+    <script src="https://unpkg.com/joi@17.4.0/dist/joi.min.js"></script>
+    <script>
+        const reporteForm = document.getElementById('reporteForm');
+
+        reporteForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const direccionInput = document.getElementById('direccion');
+            const latitudInput = document.getElementById('latitud');
+            const longitudInput = document.getElementById('longitud');
+            const descripcionInput = document.getElementById('descripcion');
+
+            const reporteData = {
+                direccion: direccionInput.value,
+                latitud: parseFloat(latitudInput.value),
+                longitud: parseFloat(longitudInput.value),
+                descripcion: descripcionInput.value
+            };
+
+            const schema = Joi.object({
+                direccion: Joi.string().required(),
+                latitud: Joi.number().min(6.14).max(6.200).required(),
+                longitud: Joi.number().min(-75.50).max(-75.43).required(),
+                descripcion: Joi.string().required()
+            });
+
+            const validationResult = schema.validate(reporteData);
+
+            if (validationResult.error) {
+                displayErrors(validationResult.error.details);
+            } else {
+                // Realizar la solicitud AJAX para enviar los datos al backend
+                console.log('Formulario válido. Enviar datos al backend.');
+                // ...
+            }
+        });
+
+        function displayErrors(errors) {
+            // Limpiar los mensajes de error anteriores
+            clearErrors();
+
+            errors.forEach((error) => {
+                const errorElement = document.getElementById(`${error.context.key}Error`);
+                errorElement.textContent = error.message;
+            });
+        }
+
+        function clearErrors() {
+            const errorElements = document.getElementsByClassName('error');
+            Array.from(errorElements).forEach((element) => {
+                element.textContent = '';
+            });
+        }
+    </script>
+</body>
+
+</html>
